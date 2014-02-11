@@ -15,6 +15,7 @@ function Plugin(messenger, options){
 
   this.board = new firmata.Board(this.options.port, function (err, ok) {
     if (err){
+      console.log('could node connect to board' , err);
       throw err;
     }
 
@@ -37,13 +38,39 @@ Plugin.getOptionsSchema = function(){
   };
 };
 
+function getModes(pin){
+  return pin.supportedModes.map(function (mode) {
+    return modeNames[mode];
+  });
+}
+
+
 Plugin.prototype.onMessage = function(data){
+  var board = this.board;
+
   if(data.pins){
+
     data.pins.forEach(function(pin){
       if(pin.value == 'on'){
-        this.board.digitalWrite(pin.id, 1);
+        board.digitalWrite(pin.id, 1);
       }else{
-        this.board.digitalWrite(pin.id, 0);
+        board.digitalWrite(pin.id, 0);
+      }
+    });
+  }
+
+  if(data.fromUuid && data.pinModes){
+    this.messenger.send({
+      devices: data.fromUuid,
+      message: {
+        pinModes: board.pins.map(function (pin, i) {
+          console.log(i, pin);
+          if (!pin.supportedModes.length){
+            return {id:i, mode:null, supported:null};
+          }else{
+            return {id:i, mode:modeNames[pin.mode], supported:getModes(pin)};
+          }
+        })
       }
     });
   }
