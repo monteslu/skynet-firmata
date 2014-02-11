@@ -1,0 +1,17 @@
+{
+  "name": "skynet-firmata",
+  "version": "0.1.0",
+  "description": "Simple firmata plugin for Skynet Gateway",
+  "keywords": [
+    "skynet-plugin"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luis Montes",
+  "license": "MIT",
+  "dependencies": {
+    "firmata": "~0.3.2"
+  }
+}
